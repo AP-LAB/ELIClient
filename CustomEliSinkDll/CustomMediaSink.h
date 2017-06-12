@@ -1,4 +1,5 @@
 #pragma once
+#include "pch.h"
 #include <VideoStreamSink.h>
 #include <iostream>
 #include <map>
@@ -59,7 +60,9 @@ public:
 	HRESULT STDMETHODCALLTYPE OnClockStart(MFTIME hnsSystemTime, LONGLONG llClockStartOffset) override;
 	HRESULT STDMETHODCALLTYPE OnClockStop(MFTIME hnssSystemTime);
 
+	void ConvertPropertiesToMediaType(ABI::Windows::Media::MediaProperties::IMediaEncodingProperties * mep, IMFMediaType ** ppMT);
 
+	
 	private:
 		bool _IsShutdown;
 		std::map<DWORD, VideoStreamSink*> streams;

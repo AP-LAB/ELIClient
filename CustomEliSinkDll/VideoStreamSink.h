@@ -26,6 +26,12 @@ public:
 		const PROPVARIANT *pvarMarkerValue,
 		const PROPVARIANT *pvarContextValue) override;
 	HRESULT STDMETHODCALLTYPE ProcessSample(IMFSample *pSample) override;
+	HRESULT STDMETHODCALLTYPE ShutDown() {
+		//TODO
+
+		_eventQueue.Reset();
+	
+	};
 
 	//IUnknown override methods:
 	ULONG STDMETHODCALLTYPE AddRef() override;
@@ -59,5 +65,20 @@ private:
 	bool busy = false;
 	Microsoft::WRL::ComPtr<IMFMediaEventQueue> _eventQueue;
 	IMFMediaType *mediaType;
+	bool _fIsVideo;
+
+	HRESULT IsShutdown() const
+	{
+		if (_isShutDown)
+		{
+			return MF_E_SHUTDOWN;
+		}
+		else
+		{
+			return S_OK;
+		}
+	}
+
+
 
 };

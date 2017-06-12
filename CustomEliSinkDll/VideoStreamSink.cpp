@@ -5,25 +5,37 @@
 
 HRESULT VideoStreamSink::Flush()
 {
+	//TODO
 	return E_NOTIMPL;
 }
 
 HRESULT VideoStreamSink::GetIdentifier(DWORD * pdwIdentifier)
 {
-	return ID;
+	*pdwIdentifier = ID;
+	return IsShutdown();
 }
 
 HRESULT VideoStreamSink::GetMediaSink(IMFMediaSink ** ppMediaSink)
 {
 	*ppMediaSink = mediaSink;
-	return S_OK;
+	return IsShutdown();
 }
 
 HRESULT VideoStreamSink::GetMediaTypeHandler(IMFMediaTypeHandler ** ppHandler)
 {
+	if (ppHandler == NULL)
+	{
+		return E_INVALIDARG;
+	}
 
-	streamSink->GetMediaTypeHandler(ppHandler);
-	return S_OK;
+	HRESULT hr = IsShutdown();
+
+	// This stream object acts as its own type handler, so we QI ourselves.
+	if (SUCCEEDED(hr))
+	{
+		hr = this->QueryInterface(IID_IMFMediaTypeHandler, (void**)ppHandler);
+	}
+	return hr;
 }
 
 HRESULT VideoStreamSink::PlaceMarker(MFSTREAMSINK_MARKER_TYPE eMarkerType, const PROPVARIANT * pvarMarkerValue, const PROPVARIANT * pvarContextValue)
@@ -40,6 +52,8 @@ HRESULT VideoStreamSink::PlaceMarker(MFSTREAMSINK_MARKER_TYPE eMarkerType, const
 		return	S_OK;
 	}
 
+
+
 	return	S_OK;
 }
 
@@ -53,8 +67,7 @@ HRESULT VideoStreamSink::ProcessSample(IMFSample * pSample)
 //IUnknown override methods implemented:
 ULONG VideoStreamSink::AddRef()
 {
-	InterlockedIncrement(&refcount);
-	return refcount;
+	return InterlockedIncrement(&refcount);
 }
 
 HRESULT VideoStreamSink::QueryInterface(REFIID riid, void ** ppvObject)
@@ -110,38 +123,141 @@ HRESULT VideoStreamSink::QueueEvent(MediaEventType met, REFGUID guidExtendedType
 HRESULT VideoStreamSink::IsMediaTypeSupported(IMFMediaType * pMediaType, IMFMediaType ** ppMediaType)
 {
 	//TODO implement
+	if (pMediaType == nullptr)
+	{
+		return E_INVALIDARG;
+	}
 
-	return E_NOTIMPL;
+	GUID majorType = GUID_NULL;
+	UINT cbSize = 0;
+
+	HRESULT hr = IsShutdown();
+
+	if (SUCCEEDED(hr))
+	{
+		hr = pMediaType->GetGUID(MF_MT_MAJOR_TYPE, &majorType);
+	}
+
+	// First make sure it's video or audio type.
+	if (SUCCEEDED(hr))
+	{
+		if (majorType != MFMediaType_Video && majorType != MFMediaType_Audio)
+		{
+			hr = MF_E_INVALIDTYPE;
+		}
+	}
+
+	if (SUCCEEDED(hr) && mediaType != nullptr)
+	{
+		GUID guiNewSubtype;
+		if (FAILED(pMediaType->GetGUID(MF_MT_SUBTYPE, &guiNewSubtype)))
+		{
+			hr = MF_E_INVALIDTYPE;
+		}
+	}
+
+	// We don't return any "close match" types.
+	if (ppMediaType)
+	{
+		*ppMediaType = nullptr;
+	}
+
+	return hr;
 }
 
 HRESULT VideoStreamSink::GetMediaTypeCount(DWORD * pdwTypeCount)
 {
 	//TODO implement
-	return E_NOTIMPL;
+	if (pdwTypeCount == NULL)
+	{
+		return E_INVALIDARG;
+	}
+
+	HRESULT hr = IsShutdown();
+
+	if (SUCCEEDED(hr))
+	{
+		*pdwTypeCount = 1;
+	}
+
+	return hr;
 }
 
 HRESULT VideoStreamSink::GetMediaTypeByIndex(DWORD dwIndex, IMFMediaType ** ppType)
 {
-	//TODO implement
-	return E_NOTIMPL;
+	//TODO implement or check
+	if (ppType == nullptr)
+	{
+		return E_INVALIDARG;
+	}
+
+
+	HRESULT hr = IsShutdown();
+
+	if (dwIndex > 0)
+	{
+		hr = MF_E_NO_MORE_TYPES;
+	}
+	else
+	{
+		*ppType = mediaType;
+		if (*ppType != nullptr)
+		{
+			(*ppType)->AddRef();
+		}
+	}
+	return hr;
 }
 
 HRESULT VideoStreamSink::SetCurrentMediaType(IMFMediaType * pMediaType)
 {
-	//TODO implement
-	return E_NOTIMPL;
+	HRESULT hr = S_OK;
+		if (pMediaType == nullptr)
+		{
+			hr = E_INVALIDARG;
+		}
+
+		if (!SUCCEEDED(hr)) {
+			return hr;
+		}
+			
+		hr = (IsMediaTypeSupported(pMediaType, nullptr));
+		
+		if (!SUCCEEDED(hr)) {
+			return hr;
+		}
+
+		GUID guiMajorType;
+		pMediaType->GetMajorType(&guiMajorType);
+		_fIsVideo = (guiMajorType == MFMediaType_Video);
+
+		MFCreateMediaType(&mediaType);
+		(pMediaType->CopyAllItems(mediaType));
+			
+	return hr;
 }
 
 HRESULT VideoStreamSink::GetCurrentMediaType(IMFMediaType ** ppMediaType)
 {
-	//TODO implement
-	return E_NOTIMPL;
+	*ppMediaType = mediaType;
+	return IsShutdown();
 }
 
 HRESULT VideoStreamSink::GetMajorType(GUID * pguidMajorType)
 {
-	//TODO implement
-	return E_NOTIMPL;
+	if (pguidMajorType == nullptr)
+	{
+		return E_INVALIDARG;
+	}
+
+	if (!mediaType)
+	{
+		return MF_E_NOT_INITIALIZED;
+	}
+
+	*pguidMajorType = (_fIsVideo) ? MFMediaType_Video : MFMediaType_Audio;
+
+	return S_OK;
 }
 
 

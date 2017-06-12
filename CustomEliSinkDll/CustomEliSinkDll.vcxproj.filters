@@ -11,6 +11,9 @@
     <Filter Include="Sink\MediaSink">
       <UniqueIdentifier>{4f847259-7d0c-4508-ab98-5b51a03efc50}</UniqueIdentifier>
     </Filter>
+    <Filter Include="MediaSource">
+      <UniqueIdentifier>{bcb41654-bf9c-4814-9d0b-e19b4a0ecf94}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
@@ -33,5 +36,10 @@
     <ClInclude Include="VideoStreamSink.h">
       <Filter>Sink</Filter>
     </ClInclude>
+    <ClInclude Include="BaseAttributes.h" />
+    <ClInclude Include="LinkList.h" />
+    <ClInclude Include="WRLEvents.h" />
+    <ClInclude Include="WRLUtilities.h" />
+    <ClInclude Include="CustomSink.h" />
   </ItemGroup>
 </Project>

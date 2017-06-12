@@ -98,11 +98,14 @@
     <Compile Include="Capturer.cs" />
     <Compile Include="Connector.cs" />
     <Compile Include="CustomStream.cs" />
+    <Compile Include="InputVideoStream.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Receiver.cs" />
     <Compile Include="Streamer.cs" />
+    <Compile Include="OutputVideoStream.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">

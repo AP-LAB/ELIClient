@@ -2,11 +2,10 @@
 #include "CustomMediaSink.h"
 
 
-//IMFMediaSink overriden methods:
+//IMFMediaSink overridden methods:
 
 HRESULT CustomMediaSink::GetCharacteristics(DWORD *pdwCharacteristics) {	
 	*pdwCharacteristics = 0;
-	//Check if shutdown is toggled?
 	return IsShutdown();
 }
 
@@ -23,15 +22,19 @@ HRESULT CustomMediaSink::AddStreamSink(DWORD dwStreamSinkIdentifier, IMFMediaTyp
 
 	//Check if stream exists
 	IMFStreamSink *pFoundStream;
-	GetStreamSinkById(dwStreamSinkIdentifier, &pFoundStream);
-	if (!pFoundStream) {
+	hr = GetStreamSinkById(dwStreamSinkIdentifier, &pFoundStream);
+	if (SUCCEEDED(hr)) {
 		return MF_E_STREAMSINK_EXISTS;
+	}
+	else
+	{
+		hr = S_OK;
 	}
 
 	VideoStreamSink *newSink = new VideoStreamSink(dwStreamSinkIdentifier, this, pMediaType);
 	streams[dwStreamSinkIdentifier] = (newSink);
 
-	//Set the returned sink
+	//Set the returned sink todo: 
 	**ppStreamSink = (*newSink);
 
 	return hr;
@@ -141,7 +144,7 @@ HRESULT CustomMediaSink::Shutdown()
 
 	//Stop all streams
 
-
+	//kill references todo
 	clock.Reset();
 	_IsShutdown = true;
 
@@ -193,23 +196,30 @@ HRESULT CustomMediaSink::OnClockPause(MFTIME hnsSystemTime)
 
 HRESULT CustomMediaSink::OnClockRestart(MFTIME hnsSystemTime)
 {
+	//TODO
 	return IsShutdown();
 }
 
 HRESULT CustomMediaSink::OnClockSetRate(MFTIME hnsSystemTime, float flRate)
 {
+	//TODO
 	return IsShutdown();
 }
 
 HRESULT CustomMediaSink::OnClockStart(MFTIME hnsSystemTime, LONGLONG llClockStartOffset)
 {
+	//TODO
 	return IsShutdown();
 }
 
 HRESULT CustomMediaSink::OnClockStop(MFTIME hnssSystemTime)
 {
+	//TODO
 	return IsShutdown();
 }
+
+
+	
 
 
 

@@ -11,6 +11,16 @@ using Windows.Media.Capture;
 using Windows.Media.MediaProperties;
 using Windows.Storage.Streams;
 
+using Windows.Media.Capture.Frames;
+using Windows.Devices.Enumeration;
+using Windows.Media.Capture;
+using Windows.UI.Xaml.Media.Imaging;
+using Windows.Media.MediaProperties;
+using Windows.Graphics.Imaging;
+using System.Threading;
+using Windows.UI.Core;
+using System.Threading.Tasks;
+using Windows.Media.Devices;
 
 namespace ELIClient
 {
@@ -18,11 +28,13 @@ namespace ELIClient
     {
         public MediaCapture _mediaCapture;
 
-
         public bool isSetUp = false;
+
+        OutputVideoStream currentOutputStream;
+
         public Capturer()
         {
-            SetUpMediaCapture();
+            //SetUpMedkiaCapture();
 
         }
 
@@ -38,38 +50,125 @@ namespace ELIClient
             isSetUp = true;
         }
 
-        public async Task<SoftwareBitmap> TakePhoto()
+
+
+
+        public async Task<DeviceInformation> GetVideoCaptureDeviceOnMachine()
         {
-            Stopwatch s = new Stopwatch();
-            s.Start();
-            // Prepare and capture photo
-            var lowLagCapture = await _mediaCapture.PrepareLowLagPhotoCaptureAsync(ImageEncodingProperties.CreateUncompressed(MediaPixelFormat.Bgra8));
-            //Take photo
-            var capturedPhoto = await lowLagCapture.CaptureAsync();
-            //Get a SoftwareBitmap
-            var softwareBitmap = capturedPhoto.Frame.SoftwareBitmap;
-            //Release LowLagPhotoCapture object
-            await lowLagCapture.FinishAsync();
-            s.Stop();
-            Debug.WriteLine(s.ElapsedMilliseconds);
-            return softwareBitmap;
+            var foundDevices = await Device​Information.FindAllAsync(DeviceClass.VideoCapture);
+            foreach (DeviceInformation deviceInfo in foundDevices)
+            {
+                if (deviceInfo.IsEnabled)
+                {
+                    return deviceInfo;
+                }
+            }
+
+            //Throw error!
+
+            return foundDevices.First();            
         }
 
-        public async Task<SoftwareBitmap> GetFrame()
+        public async Task<DeviceInformation> GetAudioCaptureDeviceOnMachine()
         {
-            // Get information about the preview
-            var previewProperties = _mediaCapture.VideoDeviceController.GetMediaStreamProperties(MediaStreamType.VideoPreview) as VideoEncodingProperties;
+            var foundDevices = await Device​Information.FindAllAsync(DeviceClass.AudioCapture);
+            foreach(DeviceInformation deviceInfo in foundDevices)
+            {
+                if (deviceInfo.IsEnabled)
+                {
+                    return deviceInfo;
+                }
+            }
+            
+            //Throw error!
 
-            //Create a video frame in the desired format for the preview frame
-
-            VideoFrame videoFrame = new VideoFrame(BitmapPixelFormat.Bgra8, (int)previewProperties.Width, (int)previewProperties.Height);
-
-            VideoFrame previewFrame = await _mediaCapture.GetPreviewFrameAsync(videoFrame);
-
-            return previewFrame.SoftwareBitmap;
-
-            //http://www.codepool.biz/csharp-camera-api-video-frame.html ?
+            return foundDevices.First();
         }
+
+        public async void InitializeAndSetMediaCaptureAsync()
+        {
+            _mediaCapture = new MediaCapture();
+
+            DeviceInformation foundAudioDevice = await GetAudioCaptureDeviceOnMachine();
+            DeviceInformation foundVideoDevice = await GetVideoCaptureDeviceOnMachine();          
+
+            var settings = new MediaCaptureInitializationSettings()
+            {
+                AudioDeviceId = foundAudioDevice.Id,
+                VideoDeviceId = foundVideoDevice.Id,
+                SharingMode = MediaCaptureSharingMode.ExclusiveControl,
+                MemoryPreference = MediaCaptureMemoryPreference.Cpu,
+                StreamingCaptureMode = StreamingCaptureMode.AudioAndVideo
+            };
+
+            await _mediaCapture.InitializeAsync(settings);
+            isSetUp = true;
+
+        }
+
+        public async void StartVideoRecording()
+        {
+            //Make sure the MediaCapture object is initialized
+            await CheckSetUp();
+
+            try
+            {
+                Streamer streamer = new Streamer("localhost", "4567");
+                await streamer.Connect();
+                //When the streamer is connected, create a new Output stream using the streamer
+                currentOutputStream = new OutputVideoStream(streamer);
+
+                GC.KeepAlive(currentOutputStream);
+
+                //Start recording
+                await _mediaCapture.StartRecordToStreamAsync(MediaEncodingProfile.CreateMp4(VideoEncodingQuality.Vga), currentOutputStream);
+
+
+                //while (true)
+                //{
+                //    await Task.Delay(TimeSpan.FromSeconds(1));
+                //    Debug.WriteLine(_mediaCapture.ThermalStatus);
+                //}
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+                Debug.WriteLine(ex.Source);
+                //TODO error management
+            }
+            
+        }
+
+        private async Task CheckSetUp()
+        {
+            //TODO what if it fails?
+            while (!isSetUp)
+            {
+                await Task.Delay(TimeSpan.FromSeconds(1));
+            }
+
+
+       
+
+        }
+
+        public async void A()
+        {
+            while(!isSetUp){
+                await Task.Delay(TimeSpan.FromSeconds(1));
+            }
+            var stream = new InMemoryRandomAccessStream();
+
+            await _mediaCapture.StartRecordToStreamAsync(MediaEncodingProfile.CreateMp4(VideoEncodingQuality.Vga), stream);
+
+        }
+
+
+        //https://docs.microsoft.com/en-us/windows/uwp/audio-video-camera/process-media-frames-with-mediaframereader
+
 
     }
+
+
 }

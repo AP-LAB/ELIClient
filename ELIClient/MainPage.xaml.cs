@@ -20,6 +20,15 @@ using System.Diagnostics;
 using Windows.Media.MediaProperties;
 using Windows.Media.Capture;
 using Windows.Media;
+using Windows.Media.Playback;
+using Windows.Media.Core;
+using Windows.Storage.Streams;
+using Windows.Media.Devices;
+using System.Net;
+using System.Net.Sockets;
+using Windows.Networking.Sockets;
+using Windows.Networking;
+//using System.Net;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -30,62 +39,42 @@ namespace ELIClient
     /// </summary>
     public sealed partial class MainPage : Page
     {
+        public static MediaPlaybackList _playlist = null;
+        Capturer capturer = new Capturer();
+
         public MainPage()
         {
             this.InitializeComponent();
 
-            Capturer c = new Capturer();
-
-            //c.SetUpMediaCapture();
-            StartPreview(c);
-
-            //c.StartLiveStream();
 
 
 
+            capturer.InitializeAndSetMediaCaptureAsync();
 
+
+
+            //c.A();
+
+
+            capturer.StartVideoRecording();
+
+            SetUpReceiver();
 
         }
 
-        async void StartPreview(Capturer capturer) {
-
-            //Make sure the capturer is set up.
-            if (!capturer.isSetUp)
-            {
-                await Task.Delay(TimeSpan.FromSeconds(1));
-            }
-
-            //Set of the Frames Per Second and the time for every frame.
-            int FPS = 60;
-            int framePeriod = 1000 / FPS;
-            Debug.WriteLine(framePeriod);
-            Stopwatch stopwatch = new Stopwatch();
-            while (true)
-            {
-                //Start timer
-                stopwatch.Restart();
-
-                // Create a video frame in the desired format for the preview frame
-                var softwareBitmap = await capturer.GetFrame();
-
-                //Convert the photo to a SoftwareBitmap with a pixelformat Bgra8 and a premultiplied alpahmode. 
-                //This conversion is needed for creating a SoftwareBitmapSource out of the SoftwareBitmap.
-                SoftwareBitmap displayableImage = SoftwareBitmap.Convert(softwareBitmap, BitmapPixelFormat.Bgra8, BitmapAlphaMode.Premultiplied);
-                //Create a SoftwareBitmapSource and copy the SoftwareBitmap into it.
-                var softwareBitmapSource = new SoftwareBitmapSource();
-                await softwareBitmapSource.SetBitmapAsync(displayableImage);
-                //Set the source of the image in the xaml form.
-                image.Source = softwareBitmapSource;
-
-                //Stop timer
-                stopwatch.Stop();               
-                int sleeptime = framePeriod - (int) stopwatch.ElapsedMilliseconds;
-                //If there is any time left, wait that amount of time.
-                if (sleeptime > 0)
-                {
-                    await Task.Delay(sleeptime);
-                }
-            }
+        private async void SetUpReceiver()
+        {
+            InputVideoStream receiver = new InputVideoStream("localhost", "4567");
+            await receiver.Connect();
+            a.SetSource(receiver, "text/plain");
         }
+
+        private void Playlist_ItemFailed(MediaPlaybackList sender, MediaPlaybackItemFailedEventArgs args)
+        {
+            Debug.WriteLine(args.Error.ErrorCode);
+            _playlist.Items.Remove(args.Item);
+        }
+
+        
     }
 }

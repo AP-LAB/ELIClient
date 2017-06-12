@@ -9,6 +9,7 @@
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Image Name="image" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Stretch="UniformToFill"/>
-
+        
+        <MediaElement Name="a" />
     </Grid>
 </Page>

@@ -35,7 +35,7 @@
     <AppContainerApplication>true</AppContainerApplication>
     <ApplicationType>Windows Store</ApplicationType>
     <WindowsTargetPlatformVersion>10.0.15063.0</WindowsTargetPlatformVersion>
-    <WindowsTargetPlatformMinVersion>10.0.10240.0</WindowsTargetPlatformMinVersion>
+    <WindowsTargetPlatformMinVersion>10.0.15063.0</WindowsTargetPlatformMinVersion>
     <ApplicationTypeRevision>10.0</ApplicationTypeRevision>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -188,11 +188,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="BaseAttributes.h" />
     <ClInclude Include="CustomEliSinkDll.h" />
     <ClInclude Include="CustomMediaSink.h" />
+    <ClInclude Include="CustomSink.h" />
+    <ClInclude Include="LinkList.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="VideoStreamSink.h" />
+    <ClInclude Include="WRLEvents.h" />
+    <ClInclude Include="WRLUtilities.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CustomMediaSink.cpp" />
