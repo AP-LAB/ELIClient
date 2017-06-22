@@ -188,16 +188,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="BaseAttributes.h" />
     <ClInclude Include="CustomEliSinkDll.h" />
     <ClInclude Include="CustomMediaSink.h" />
     <ClInclude Include="CustomSink.h" />
-    <ClInclude Include="LinkList.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="VideoStreamSink.h" />
-    <ClInclude Include="WRLEvents.h" />
-    <ClInclude Include="WRLUtilities.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CustomMediaSink.cpp" />

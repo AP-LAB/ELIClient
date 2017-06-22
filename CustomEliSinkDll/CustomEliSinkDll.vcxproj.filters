@@ -36,10 +36,6 @@
     <ClInclude Include="VideoStreamSink.h">
       <Filter>Sink</Filter>
     </ClInclude>
-    <ClInclude Include="BaseAttributes.h" />
-    <ClInclude Include="LinkList.h" />
-    <ClInclude Include="WRLEvents.h" />
-    <ClInclude Include="WRLUtilities.h" />
     <ClInclude Include="CustomSink.h" />
   </ItemGroup>
 </Project>

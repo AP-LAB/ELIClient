@@ -28,53 +28,44 @@ using System.Net;
 using System.Net.Sockets;
 using Windows.Networking.Sockets;
 using Windows.Networking;
+using Windows.ApplicationModel.Core;
+using Windows.Data.Json;
+using ELIClient.SimpleELIServerCommunication;
+using ELIClient.Views;
+using Windows.UI.ViewManagement;
 //using System.Net;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
 namespace ELIClient
 {
+
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
     public sealed partial class MainPage : Page
     {
-        public static MediaPlaybackList _playlist = null;
-        Capturer capturer = new Capturer();
-
+ 
         public MainPage()
         {
             this.InitializeComponent();
-
-
-
-
-            capturer.InitializeAndSetMediaCaptureAsync();
-
-
-
-            //c.A();
-
-
-            capturer.StartVideoRecording();
-
-            SetUpReceiver();
-
+            ApplicationView.PreferredLaunchViewSize = new Size(1000, 1300);
+            ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.PreferredLaunchViewSize;
         }
 
-        private async void SetUpReceiver()
+        private void RandomConnectionBtn_Click(object sender, RoutedEventArgs e)
         {
-            InputVideoStream receiver = new InputVideoStream("localhost", "4567");
-            await receiver.Connect();
-            a.SetSource(receiver, "text/plain");
+            this.Frame.Navigate(typeof(RandomConnectionView));
         }
 
-        private void Playlist_ItemFailed(MediaPlaybackList sender, MediaPlaybackItemFailedEventArgs args)
+        private void CityConnectionBtn_Click(object sender, RoutedEventArgs e)
         {
-            Debug.WriteLine(args.Error.ErrorCode);
-            _playlist.Items.Remove(args.Item);
+            this.Frame.Navigate(typeof(CityConnectionView));
         }
 
-        
+        private void CodeConnectionBtn_Click(object sender, RoutedEventArgs e)
+        {
+            this.Frame.Navigate(typeof(UserConnectionView));
+        }
     }
 }

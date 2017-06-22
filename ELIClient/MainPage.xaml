@@ -7,9 +7,33 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <Image Name="image" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Stretch="UniformToFill"/>
+    <Page.Background>
+        <ImageBrush ImageSource="ms-appx:///Assets/bg-videochat.png" />
+    </Page.Background>
+
+    <Grid HorizontalAlignment="Stretch" x:Name="OuterGrid" MaxWidth="1000" MaxHeight="1000" VerticalAlignment="Stretch">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition  />
+        </Grid.RowDefinitions>
         
-        <MediaElement Name="a" />
+        <Grid.Background>
+            <ImageBrush ImageSource="ms-appx:///Assets/ShadowVideochat.png" />
+        </Grid.Background>
+
+        <Button HorizontalAlignment="Center" VerticalAlignment="Bottom" Padding="0" BorderThickness="0" x:Name="RandomConnectionBtn" Grid.ColumnSpan="2" Grid.Row="0" Click="RandomConnectionBtn_Click" Margin="0,0,0,5">
+            <Image Stretch="None" Source="ms-appx:///Assets/RandomConnectionBtn.png" Margin="0" />
+        </Button>
+        <Button HorizontalAlignment="Right" VerticalAlignment="Top"  Padding="0" BorderThickness="0" x:Name="CityConnectionBtn"  Grid.Column="0" Grid.Row="1" Click="CityConnectionBtn_Click" Margin="0,5,5,0">
+            <Image  Stretch="None" Source="ms-appx:///Assets/CityConnectionBtn.png" />
+        </Button>
+        <Button HorizontalAlignment="Left" VerticalAlignment="Top"  Padding="0" BorderThickness="0" Grid.Column="1"  x:Name="CodeConnectionBtn" Grid.Row="1" Click="CodeConnectionBtn_Click" Margin="5,5,0,0">
+            <Image Stretch="None" Source="ms-appx:///Assets/UserConnectionBtn.png"/>
+        </Button>
+
     </Grid>
 </Page>

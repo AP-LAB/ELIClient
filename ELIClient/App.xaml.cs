@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ELIClient.SimpleELIServerCommunication;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -22,6 +23,8 @@ namespace ELIClient
     /// </summary>
     sealed partial class App : Application
     {
+        public static ServerConnector serverConnector;
+
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
@@ -30,6 +33,8 @@ namespace ELIClient
         {
             this.InitializeComponent();
             this.Suspending += OnSuspending;
+
+            serverConnector = new ServerConnector("localhost", "8005");
         }
 
         /// <summary>

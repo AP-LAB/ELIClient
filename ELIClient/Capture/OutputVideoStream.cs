@@ -17,11 +17,16 @@ using Windows.Storage.Streams;
 
 namespace ELIClient
 {
+    /// <summary>
+    /// This class is used as an input IRandomAccessStream for the StartRecordToStreamAsync() method of the MediaCapture class.
+    /// The WriteAsync() methode writes all incoming data to the Streamer outputStreamer.
+    /// The outputStreamer is passed in the constructor.
+    /// </summary>
     class OutputVideoStream : IRandomAccessStream
     {
-        Streamer outputStreamer;
-        private ulong myPosition; // Current position in the stream.
-        private ulong mySize;     // The size of the stream.
+        private Streamer outputStreamer; //!< The streamer that is used to stream the data to.
+        private ulong myPosition; //!< Current position in the stream.
+        private ulong mySize;     //!< The size of the stream.
 
         public OutputVideoStream(Streamer streamer)
         {
@@ -93,6 +98,7 @@ namespace ELIClient
                     Debug.WriteLine(ex.Message);
                     Debug.WriteLine(ex.Source);
                     //TODO what if it went wrong??
+                    throw;
                 }
 
                 return transferedSize;
@@ -104,11 +110,6 @@ namespace ELIClient
             Func<CancellationToken, IProgress<uint>, Task<uint>> taskProvider =
                 (token, progress) => task;
             return AsyncInfo.Run<uint, uint>(taskProvider);
-
-
-
-
-
         } 
 
         public IAsyncOperation<bool> FlushAsync()
