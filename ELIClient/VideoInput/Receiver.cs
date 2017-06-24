@@ -44,7 +44,10 @@ namespace ELIClient
             ////Connect to the server
             //outputStream = _outputStream;
             // 
-            StartRead();
+            Task.Run(() =>
+            {
+                StartRead();
+            });
         }
 
 

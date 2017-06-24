@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Windows.Data.Json;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -56,10 +57,15 @@ namespace ELIClient.VideoCallView
             ////Start streaming if the "Start recording" message is received.
             //if (jsonMessage.MESSAGE.equals("Start recording"))
             //{
-                capturer.InitializeAndSetMediaCaptureAsync();
-               // capturer.StartVideoRecording(serverConnector.GetSocket());
+            capturer.InitializeAndSetMediaCaptureAsync();
+            // capturer.StartVideoRecording(serverConnector.GetSocket());
 
+            Task.Run(() =>
+            {
                 capturer.StartVideoRecordingOnThread(serverConnector.GetSocket());
+            });
+            
+            
 
        
 

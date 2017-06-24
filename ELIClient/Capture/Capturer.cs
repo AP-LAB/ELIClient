@@ -131,8 +131,9 @@ namespace ELIClient
 
         public async void StartVideoRecordingOnThread(StreamSocket _socket)
         {
-            //Make sure the MediaCapture object is initialized
-            await CheckSetUp();
+            
+                //Make sure the MediaCapture object is initialized
+                await CheckSetUp();
             Streamer streamer = new Streamer(_socket);
             // When the streamer is connected, create a new Output stream using the streamer
             isRecording = true;
@@ -148,7 +149,8 @@ namespace ELIClient
                 Windows.Storage.Streams.Buffer buffer = new Windows.Storage.Streams.Buffer((uint)stream.Size);
                 await stream.ReadAsync(buffer, (uint)stream.Size, Windows.Storage.Streams.InputStreamOptions.None);
                 streamer.WriteToSocketUsingReader(buffer);
-            }          
+            }
+            
         }
 
         public async void StopRecordingAsync()
