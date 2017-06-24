@@ -36,7 +36,7 @@ namespace ELIClient.Views
 
             dynamic jsonMessage = await App.serverConnector.ReceiveMessage();
             //Start streaming if the "Start recording" message is received.
-            if (jsonMessage.MESSAGE.equals("Start recording"))
+            if (jsonMessage.GetNamedString("MESSAGE").Equals("Start recording"))
             {
                 frame.Navigate(typeof(VideoCallView.VideoCallView), App.serverConnector);
             }

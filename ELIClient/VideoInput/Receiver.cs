@@ -76,10 +76,16 @@ namespace ELIClient
                     // Load first 4 bytes that represent the size of the following message.
                     await dataReader.LoadAsync(4);
                     var size = dataReader.ReadUInt32();
+                    if (size == 0)
+                    {
+                        // Detach stream so that it won't be closed when the datareader is disposed later
+                        dataReader.DetachStream();
+                        continue;
+                    }
+
                     // Read the message.
                     await dataReader.LoadAsync(size);
                     IBuffer buffer = dataReader.ReadBuffer(size);
-
 
                     // Detach stream so that it won't be closed when the datareader is disposed later
                     dataReader.DetachStream();
@@ -88,10 +94,10 @@ namespace ELIClient
                     var item = new MediaPlaybackItem(source);
                     VideoCallView.VideoCallView._playlist.Items.Add(item);
                     VideoCallView.VideoCallView._playlist.MoveNext();
-
                 }
 
 
+               
                 //IBuffer buffer = new Windows.Storage.Streams.Buffer(4);
 
 

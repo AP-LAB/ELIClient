@@ -40,7 +40,6 @@ namespace ELIClient
             }
 
             //TODO Throw error if no  devices are found!
-
             return foundDevices.First();            
         }
 
@@ -62,7 +61,6 @@ namespace ELIClient
             }
 
             //TODO Throw error if no  devices are found!
-
             return foundDevices.First();
         }
 
@@ -133,25 +131,25 @@ namespace ELIClient
 
         public async void StartVideoRecordingOnThread(StreamSocket _socket)
         {
+            //Make sure the MediaCapture object is initialized
+            await CheckSetUp();
             Streamer streamer = new Streamer(_socket);
             // When the streamer is connected, create a new Output stream using the streamer
-            InMemoryRandomAccessStream stream = new InMemoryRandomAccessStream();
             isRecording = true;
             while (true)
             {
-                await _mediaCapture.StartRecordToStreamAsync(MediaEncodingProfile.CreateHevc(VideoEncodingQuality.Vga), stream);
+                InMemoryRandomAccessStream stream = new InMemoryRandomAccessStream();
+                await _mediaCapture.StartRecordToStreamAsync(MediaEncodingProfile.CreateMp4(VideoEncodingQuality.Vga), stream);
                 await Task.Delay(TimeSpan.FromSeconds(1));
                 await _mediaCapture.StopRecordAsync();
+
+                stream.Seek(0);
 
                 Windows.Storage.Streams.Buffer buffer = new Windows.Storage.Streams.Buffer((uint)stream.Size);
                 await stream.ReadAsync(buffer, (uint)stream.Size, Windows.Storage.Streams.InputStreamOptions.None);
                 streamer.WriteToSocketUsingReader(buffer);
-            }
-          
+            }          
         }
-
-
-
 
         public async void StopRecordingAsync()
         {
@@ -170,8 +168,6 @@ namespace ELIClient
                 await Task.Delay(TimeSpan.FromSeconds(1));
             }
         }
-
     }
-
 
 }

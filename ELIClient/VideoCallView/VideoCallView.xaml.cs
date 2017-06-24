@@ -27,7 +27,7 @@ namespace ELIClient.VideoCallView
     /// </summary>
     public sealed partial class VideoCallView : Page
     {
-        public static MediaPlaybackList _playlist = null;
+        public static MediaPlaybackList _playlist = new MediaPlaybackList();
         private Capturer capturer = new Capturer();
         private InputVideoStream inStream;
         Receiver receiver;
@@ -61,13 +61,16 @@ namespace ELIClient.VideoCallView
 
                 capturer.StartVideoRecordingOnThread(serverConnector.GetSocket());
 
-                //kSetUpReceiver();
+       
 
                 receiver = new Receiver(serverConnector.GetSocket());
+                mediaPlayer.MediaEnded += MediaEnded;
+                mediaPlayer.MediaFailed += MediaFailed;
+                mediaPlayer.MediaOpened += MediaOpened;
+                mediaPlayer.SetPlaybackSource(_playlist);
 
-
-                //inStream = new InputVideoStream(serverConnector.GetSocket());
-                //mediaPlayer.SetSource(inStream, "video/HEVC");
+            //inStream = new InputVideoStream(serverConnector.GetSocket());
+            //mediaPlayer.SetSource(inStream, "video/HEVC");
             //}
         }
 
@@ -106,9 +109,9 @@ namespace ELIClient.VideoCallView
 
         private void MediaEnded(object sender, RoutedEventArgs e)
         {
-            Debug.WriteLine("Replay");
-            mediaPlayer.Position = TimeSpan.Zero;
-            mediaPlayer.Play();
+            //Debug.WriteLine("Replay");
+            //mediaPlayer.Position = TimeSpan.Zero;
+            //mediaPlayer.Play();
         }
         
     }

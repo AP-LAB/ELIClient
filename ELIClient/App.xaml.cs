@@ -8,6 +8,7 @@ using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -32,8 +33,9 @@ namespace ELIClient
         public App()
         {
             this.InitializeComponent();
+            ApplicationView.PreferredLaunchViewSize = new Size(1000, 1000);
+            ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.PreferredLaunchViewSize;
             this.Suspending += OnSuspending;
-
             serverConnector = new ServerConnector("localhost", "8005");
         }
 
